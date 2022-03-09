@@ -2,8 +2,14 @@ import numpy as np
 import random
 import torch
 
+
+def test_sys_environment():
+    # Cuda installed
+    assert torch.cuda.is_available() is True
+    print('System works OK!')
+    return 0
+
+
 if __name__ == '__main__':
-    print('Torch test')
-    x = torch.rand(5, 3)
-    print(torch.cuda.is_available())
-    print(torch.version.cuda)
+    test_sys_environment()
+    
