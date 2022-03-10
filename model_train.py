@@ -7,6 +7,8 @@ import torch.backends.cudnn as cudnn
 import torchvision
 import torchvision.transforms as transforms
 
+from torch.profiler import profile, record_function, ProfilerActivity
+
 import os
 import argparse
 
@@ -95,6 +97,7 @@ scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=200)
 # Training
 def train(epoch):
     print('\nEpoch: %d' % epoch)
+
     net.train()
     train_loss = 0
     correct = 0
@@ -151,7 +154,22 @@ def test(epoch):
         best_acc = acc
 
 
-for epoch in range(start_epoch, start_epoch+200):
-    train(epoch)
-    test(epoch)
-    scheduler.step()
+def trace_handler(p):
+    output = p.key_averages().table(sort_by="self_cuda_time_total", row_limit=10)
+    print(output)
+    p.export_chrome_trace("/task_trace/trace_" + str(p.step_num) + ".json")
+
+
+with profile(
+    activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
+    schedule=torch.profiler.schedule(
+        wait=1,
+        warmup=1,
+        active=2),
+    on_trace_ready=trace_handler
+) as p:
+    for epoch in range(start_epoch, start_epoch+200):
+        train(epoch)
+        test(epoch)
+        scheduler.step()
+        p.step()
