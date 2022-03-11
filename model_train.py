@@ -155,10 +155,10 @@ def test(epoch):
 
 
 def trace_handler(p):
-    # output = p.key_averages().table(sort_by="self_cuda_time_total", row_limit=10)
-    # print(output)
+    output = p.key_averages().table(sort_by="self_cuda_time_total", row_limit=10)
+    print(output)
     print('Trace received. Saving...')
-    p.export_chrome_trace("./task_trace/trace_" + str(p.step_num) + ".json")
+    p.export_chrome_trace("./task_trace/second_trace_" + str(p.step_num) + ".json")
 
 
 with profile(
