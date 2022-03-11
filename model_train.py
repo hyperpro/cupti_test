@@ -12,7 +12,9 @@ from torch.profiler import profile, record_function, ProfilerActivity
 import os
 import argparse
 
-from ml_models.resnet import *
+# from ml_models.resnet import *
+# from ml_models.vgg import *
+from ml_models import *
 from utils import progress_bar
 
 
@@ -72,7 +74,8 @@ print('==> Building model..')
 # net = EfficientNetB0()
 # net = RegNetX_200MF()
 # net = SimpleDLA()
-net = ResNet50()
+# net = ResNet50()
+net = VGG('VGG11')
 
 net = net.to(device)
 if device == 'cuda':
@@ -158,7 +161,7 @@ def trace_handler(p):
     output = p.key_averages().table(sort_by="self_cuda_time_total", row_limit=10)
     print(output)
     print('Trace received. Saving...')
-    p.export_chrome_trace("./task_trace/second_trace_" + str(p.step_num) + ".json")
+    p.export_chrome_trace("./task_trace/vgg16_trace_" + str(p.step_num) + ".json")
 
 
 with profile(
