@@ -161,15 +161,15 @@ def trace_handler(p):
     output = p.key_averages().table(sort_by="self_cuda_time_total", row_limit=10)
     print(output)
     print('Trace received. Saving...')
-    p.export_chrome_trace("./task_trace/vgg00_trace_" + str(p.step_num) + ".json")
+    p.export_chrome_trace("./task_trace/vgg001_trace_" + str(p.step_num) + ".json")
 
 
 with profile(
     activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
     schedule=torch.profiler.schedule(
         wait=1,
-        warmup=1,
-        active=2),
+        warmup=2, #1,
+        active=1), #2),
     on_trace_ready=trace_handler
 ) as p:
     for epoch in range(start_epoch, start_epoch+200):
