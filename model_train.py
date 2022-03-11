@@ -75,7 +75,7 @@ print('==> Building model..')
 # net = RegNetX_200MF()
 # net = SimpleDLA()
 # net = ResNet50()
-net = VGG('VGG11')
+net = VGG('VGG00')
 
 net = net.to(device)
 if device == 'cuda':
